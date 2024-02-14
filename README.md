@@ -160,3 +160,90 @@ public class AddImageToPDF {
     }
 }
 ---------
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+
+import java.io.IOException;
+
+public class TableWithBordersPDF {
+
+    public static void main(String[] args) {
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage(PDRectangle.A4);
+            document.addPage(page);
+
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                drawTable(contentStream, page.getMediaBox().getWidth(), 700, new String[]{"Header 1", "Header 2", "Header 3"}, new String[][]{
+                        {"Row 1 Col 1", "Row 1 Col 2", "Row 1 Col 3"},
+                        {"Row 2 Col 1", "Row 2 Col 2", "Row 2 Col 3"}
+                });
+            }
+
+            document.save("table_with_borders.pdf");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void drawTable(PDPageContentStream contentStream, float pageWidth, float y, String[] headers, String[][] rows) throws IOException {
+        final int rowsCount = rows.length;
+        final int colsCount = headers.length;
+        final float rowHeight = 20f;
+        final float tableWidth = pageWidth - 40; // Assuming 20 units margin on each side
+
+        float cellMargin = 5f;
+        float tableYPosition = y;
+        float tableXPosition = 20; // Left margin
+
+        // Draw headers
+        float nextXStart = tableXPosition;
+        float cellWidth = tableWidth / colsCount;
+        for (String header : headers) {
+            drawCell(contentStream, nextXStart, tableYPosition, cellWidth, rowHeight, header);
+            nextXStart += cellWidth;
+        }
+
+        tableYPosition -= rowHeight;
+
+        // Draw rows
+        for (int i = 0; i < rowsCount; i++) {
+            String[] row = rows[i];
+            nextXStart = tableXPosition;
+            for (String rowData : row) {
+                drawCell(contentStream, nextXStart, tableYPosition, cellWidth, rowHeight, rowData);
+                nextXStart += cellWidth;
+            }
+            tableYPosition -= rowHeight;
+        }
+    }
+
+    private static void drawCell(PDPageContentStream contentStream, float xStart, float yStart, float width, float height, String content) throws IOException {
+        contentStream.setLineWidth(0.5f);
+        contentStream.moveTo(xStart, yStart);
+        contentStream.lineTo(xStart + width, yStart);
+        contentStream.stroke();
+
+        contentStream.moveTo(xStart, yStart);
+        contentStream.lineTo(xStart, yStart - height);
+        contentStream.stroke();
+
+        contentStream.moveTo(xStart + width, yStart);
+        contentStream.lineTo(xStart + width, yStart - height);
+        contentStream.stroke();
+
+        contentStream.moveTo(xStart, yStart - height);
+        contentStream.lineTo(xStart + width, yStart - height);
+        contentStream.stroke();
+
+        contentStream.beginText();
+        contentStream.setFont(PDType1Font.HELVETICA, 12);
+        contentStream.newLineAtOffset(xStart + 2, yStart - 12);
+        contentStream.showText(content);
+        contentStream.endText();
+    }
+}
+-----
