@@ -78,3 +78,46 @@ public class PdfTableCreator {
         }
     }
 }
+
+
+------------
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
+
+import java.awt.Color;
+import java.io.IOException;
+
+public class BlueRectangleCreator {
+
+    public static void main(String[] args) {
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage(PDRectangle.A4);
+            document.addPage(page);
+
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            
+            // Set fill color to blue
+            PDColor blue = new PDColor(new float[]{0, 0, 1}, PDDeviceRGB.INSTANCE);
+            contentStream.setNonStrokingColor(blue);
+
+            // Draw blue rectangle
+            float pageWidth = page.getMediaBox().getWidth();
+            float pageHeight = page.getMediaBox().getHeight();
+            float rectangleHeight = 10;
+            contentStream.addRect(0, pageHeight - rectangleHeight, pageWidth, rectangleHeight);
+            contentStream.fill();
+
+            contentStream.close();
+
+            document.save("blue_rectangle.pdf");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+--------
