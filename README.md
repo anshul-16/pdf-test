@@ -247,3 +247,6 @@ public class TableWithBordersPDF {
     }
 }
 -----
+can we create a pdf from an html document using react and spring boot
+
+----
