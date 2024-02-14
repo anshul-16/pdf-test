@@ -121,3 +121,42 @@ public class BlueRectangleCreator {
     }
 }
 --------
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
+
+public class AddImageToPDF {
+
+    public static void main(String[] args) {
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage(PDRectangle.A4);
+            document.addPage(page);
+
+            PDImageXObject image = loadImage(document, "path/to/image.png");
+
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                // Adjust the position and size of the image as needed
+                contentStream.drawImage(image, 100, 500, image.getWidth() / 2, image.getHeight() / 2);
+            }
+
+            document.save("output.pdf");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static PDImageXObject loadImage(PDDocument document, String imagePath) throws IOException {
+        try (InputStream in = new FileInputStream(new File(imagePath))) {
+            return LosslessFactory.createFromImage(document, javax.imageio.ImageIO.read(in));
+        }
+    }
+}
+---------
