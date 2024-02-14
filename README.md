@@ -247,6 +247,19 @@ public class TableWithBordersPDF {
     }
 }
 -----
-can we create a pdf from an html document using react and spring boot
+@PostMapping("/generate-pdf")
+    public void generatePDF(@RequestBody String htmlContent) throws IOException {
+        String pdfFilePath = "path/to/generated.pdf"; // Change this to your desired file path
+        File pdfFile = new File(pdfFilePath);
+        
+        // Convert HTML content to PDF
+        try (FileOutputStream fos = new FileOutputStream(pdfFile)) {
+            ITextRenderer renderer = new ITextRenderer();
+            renderer.setDocumentFromString(htmlContent);
+            renderer.layout();
+            renderer.createPDF(fos);
+            fos.close();
+        }
+    }
 
 ----
