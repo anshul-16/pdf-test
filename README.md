@@ -326,3 +326,86 @@ public class TableWithBordersPDF {
     <p>Nulla faucibus odio quis purus mollis, non volutpat mi hendrerit. Sed ac felis sit amet mi posuere efficitur.</p>
 </body>
 </html>
+
+--------
+import java.io.IOException;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+
+public class TableWithBorders {
+    public static void main(String[] args) {
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage(PDRectangle.A4);
+            document.addPage(page);
+
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            float margin = 50;
+            float yStart = page.getMediaBox().getHeight() - margin;
+            float tableWidth = page.getMediaBox().getWidth() - 2 * margin;
+            float yPosition = yStart;
+            int rows = 5;
+            int cols = 3;
+            float rowHeight = 20f;
+            float tableMargin = 10f;
+            float cellMargin = 2f;
+
+            // Content
+            String[][] content = {
+                {"Header 1",
+            "Header 2",
+            "Header 3"},
+            {"Row 1 Col 1", "Row 1 Col 2", "Row 1 Col 3"},
+            {"Row 2 Col 1", "Row 2 Col 2", "Row 2 Col 3"},
+            {"Row 3 Col 1", "Row 3 Col 2", "Row 3 Col 3"},
+            {"Row 4 Col 1", "Row 4 Col 2", "Row 4 Col 3"}
+        };
+
+        float[][] columnWidths = new float[cols][rows];
+        for (int i = 0; i < cols; i++) {
+            float maxWidth = 0;
+            for (int j = 0; j < rows; j++) {
+                float width = PDType1Font.HELVETICA.getStringWidth(content[j][i]) / 1000 * 12;
+                columnWidths[i][j] = width;
+                if (width > maxWidth) {
+                    maxWidth = width;
+                }
+            }
+            columnWidths[i][rows] = maxWidth + 2 * cellMargin;
+        }
+
+        // Drawing table
+        for (int i = 0; i <= rows; i++) {
+            contentStream.drawLine(margin, yPosition, margin + tableWidth, yPosition);
+            yPosition -= rowHeight;
+        }
+        for (int i = 0; i <= cols; i++) {
+            float xPosition = margin;
+            for (int j = 0; j < i; j++) {
+                xPosition += columnWidths[j][rows];
+            }
+            contentStream.drawLine(xPosition, yStart, xPosition, yPosition + rowHeight);
+        }
+        yPosition = yStart - rowHeight;
+        for (int i = 0; i < rows; i++) {
+            float xPosition = margin;
+            for (int j = 0; j < cols; j++) {
+                contentStream.beginText();
+                contentStream.setFont(PDType1Font.HELVETICA, 12);
+                contentStream.newLineAtOffset(xPosition + cellMargin, yPosition - cellMargin);
+                contentStream.showText(content[i][j]);
+                contentStream.endText();
+                xPosition += columnWidths[j][rows];
+            }
+            yPosition -= rowHeight;
+        }
+
+        contentStream.close();
+        document.save("TableWithBorders.pdf");
+        System.out.println("Table created successfully!");
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
