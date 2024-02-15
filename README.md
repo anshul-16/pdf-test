@@ -458,3 +458,69 @@ public class FileController {
                 .body(resource);
     }
 }
+-----
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+@RestController
+@RequestMapping("/files")
+public class FileController {
+
+    @GetMapping("/download")
+    public ResponseEntity<FileSystemResource> downloadFiles() throws IOException {
+        String directoryPath = "/path/to/your/directory"; // Specify your directory path here
+        File directory = new File(directoryPath);
+
+        if (!directory.exists() || !directory.isDirectory()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        // Get list of files in the directory
+        File[] files = directory.listFiles();
+        List<Path> filePaths = new ArrayList<>();
+
+        // Add file paths to the list
+        for (File file : files) {
+            if (file.isFile()) {
+                filePaths.add(file.toPath());
+            }
+        }
+
+        // Create a zip archive containing all files
+        Path zipFilePath = Paths.get(directoryPath, "files.zip");
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(Files.newOutputStream(zipFilePath))) {
+            for (Path filePath : filePaths) {
+                ZipEntry zipEntry = new ZipEntry(directory.toPath().relativize(filePath).toString());
+                zipOutputStream.putNextEntry(zipEntry);
+                Files.copy(filePath, zipOutputStream);
+                zipOutputStream.closeEntry();
+            }
+        }
+
+        // Send the zip file in the response
+        FileSystemResource resource = new FileSystemResource(zipFilePath.toFile());
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=files.zip");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
+}
