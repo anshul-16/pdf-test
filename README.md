@@ -409,3 +409,52 @@ public class TableWithBorders {
         e.printStackTrace();
     }
 }
+----
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+@Controller
+public class FileController {
+
+    private static final String FILE_DIRECTORY = "/path/to/your/files/directory/";
+
+    @GetMapping("/files/{fileName}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) {
+        Path filePath = Paths.get(FILE_DIRECTORY, fileName);
+        Resource resource;
+        try {
+            resource = new org.springframework.core.io.FileUrlResource(filePath.toUri());
+        } catch (IOException e) {
+            // Handle file not found exception
+            return ResponseEntity.notFound().build();
+        }
+
+        // Try to determine file's content type
+        String contentType;
+        try {
+            contentType = Files.probeContentType(filePath);
+        } catch (IOException e) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        // Fallback to application/octet-stream if content type could not be determined
+        if (contentType == null) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }
+}
