@@ -524,3 +524,15 @@ public class FileController {
                 .body(resource);
     }
 }
+-------
+
+/ Draw underline
+            float textWidth = PDType1Font.HELVETICA_BOLD.getStringWidth(text) / 1000 * 12;
+            float lineWidth = 1.5f;
+            contentStream.setLineWidth(lineWidth);
+            contentStream.moveTo(x, y - 3); // Move to start of underline
+            contentStream.lineTo(x + textWidth, y - 3); // Draw line
+            contentStream.closeAndStroke(); // Close the path and stroke it
+
+            contentStream.close(); // Close the content stream
+----
