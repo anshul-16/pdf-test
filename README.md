@@ -546,3 +546,19 @@ private byte[] inputStreamToByteArray(InputStream inputStream) throws IOExceptio
         return outputStream.toByteArray();
     }
     -----
+// Convert byte[] to InputStream
+        InputStream inputStream = new ByteArrayInputStream(pdfBytes);
+
+        // Set headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("filename", "document.pdf");
+
+        // Create InputStreamResource
+        InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
+
+        // Return response entity
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(inputStreamResource);
+    }
