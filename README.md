@@ -562,3 +562,14 @@ private byte[] inputStreamToByteArray(InputStream inputStream) throws IOExceptio
                 .headers(headers)
                 .body(inputStreamResource);
     }
+----
+String base64EncodedPDF = Base64.getEncoder().encodeToString(pdfBytes);
+
+        // Set headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Return the base64 encoded PDF as JSON response
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body("{\"pdf\": \"" + base64EncodedPDF + "\"}");
