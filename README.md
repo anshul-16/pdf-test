@@ -573,3 +573,15 @@ String base64EncodedPDF = Base64.getEncoder().encodeToString(pdfBytes);
         return ResponseEntity.ok()
                 .headers(headers)
                 .body("{\"pdf\": \"" + base64EncodedPDF + "\"}");
+---
+String input = "stringRSF-23-0000007SRSF-23-0000008String";
+
+        String regex = "RSF-\\d{2}-\\d{7}";
+
+        List<String> matches = extractMatches(input, regex);
+
+        System.out.println("Matches:");
+        for (String match : matches) {
+            System.out.println(match);
+        }
+        ---
