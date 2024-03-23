@@ -604,3 +604,10 @@ style="width: 100%; height: 100%;"
       [class]="themeClass"
       (firstDataRendered)="onFirstDataRendered($event)"
       (gridReady)="onGridReady($event)"
+--------------------
+
+public paginationNumberFormatter: (
+    params: PaginationNumberFormatterParams,
+  ) => string = (params: PaginationNumberFormatterParams) => {
+    return "[" + params.value.toLocaleString() + "]";
+  };
