@@ -585,3 +585,22 @@ String input = "stringRSF-23-0000007SRSF-23-0000008String";
             System.out.println(match);
         }
         ---
+------------------------------
+
+style="width: 100%; height: 100%;"
+      [columnDefs]="columnDefs"
+      [autoGroupColumnDef]="autoGroupColumnDef"
+      [defaultColDef]="defaultColDef"
+      [suppressRowClickSelection]="true"
+      [groupSelectsChildren]="true"
+      [rowSelection]="rowSelection"
+      [rowGroupPanelShow]="rowGroupPanelShow"
+      [pivotPanelShow]="pivotPanelShow"
+      [pagination]="true"
+      [paginationPageSize]="paginationPageSize"
+      [paginationPageSizeSelector]="paginationPageSizeSelector"
+      [paginationNumberFormatter]="paginationNumberFormatter"
+      [rowData]="rowData"
+      [class]="themeClass"
+      (firstDataRendered)="onFirstDataRendered($event)"
+      (gridReady)="onGridReady($event)"
