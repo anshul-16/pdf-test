@@ -611,3 +611,30 @@ public paginationNumberFormatter: (
   ) => string = (params: PaginationNumberFormatterParams) => {
     return "[" + params.value.toLocaleString() + "]";
   };
+
+
+
+
+
+
+----------
+def split_sql_file(input_file, lines_per_file=50000):
+    file_count = 0
+    line_count = 0
+    output_file = None
+
+    with open(input_file, 'r', encoding='utf-8') as infile:
+        for line in infile:
+            if line_count % lines_per_file == 0:
+                if output_file:
+                    output_file.close()
+                output_file = open(f'output_{file_count}.sql', 'w', encoding='utf-8')
+                file_count += 1
+            output_file.write(line)
+            line_count += 1
+
+    if output_file:
+        output_file.close()
+
+# Usage
+split_sql_file('large_file.sql')
