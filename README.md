@@ -638,3 +638,52 @@ def split_sql_file(input_file, lines_per_file=50000):
 
 # Usage
 split_sql_file('large_file.sql')
+
+
+-----------------------------
+#UAT Mail
+
+Certainly! Here is the revised email with the information about the migration of the FEECOM application to FeesOne:
+
+---
+
+**Subject: Important: Upcoming User Acceptance Testing for Migration to FeesOne UI**
+
+Dear [User/Team],
+
+I hope this message finds you well.
+
+We are excited to inform you about an important migration project that has been underway. We are migrating the FEECOM application to the new and improved FeesOne UI. This upgrade is designed to provide a more efficient and user-friendly experience.
+
+### Key Information:
+
+- **New Application Access:**  
+  You will need to use the new URL to access the FeesOne application. Please update your bookmarks and any relevant documentation.
+
+- **Functionality:**  
+  All features of the application should function as expected. We have worked diligently to ensure a seamless transition.
+
+### User Acceptance Testing (UAT):
+
+To ensure everything is working correctly, we require your participation in a round of User Acceptance Testing (UAT). This will help us identify and address any issues before the final rollout.
+
+- **UAT Start Date:** [Insert Date]
+- **Overview Meeting:** I will be setting up a meeting to provide an overview of the new FeesOne UI and guide you through the key features and changes.
+
+During the UAT period, we encourage you to thoroughly test the application and provide us with your observations and feedback. Your input is invaluable in ensuring the application meets your needs and expectations.
+
+Please keep an eye out for the meeting invitation, which will contain further details and instructions on how to proceed with the UAT.
+
+If you have any questions or need additional information, please do not hesitate to reach out.
+
+Thank you for your cooperation and support in this important project. We look forward to your feedback and a successful migration.
+
+Best regards,
+
+[Your Name]  
+[Your Position]  
+[Your Contact Information]
+
+---
+
+Feel free to adjust any details as necessary.
