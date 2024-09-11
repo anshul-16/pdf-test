@@ -1,5 +1,25 @@
-You are given a 0-indexed integer array mapping which represents the mapping rule of a shuffled decimal system. mapping[i] = j means digit i should be mapped to digit j in this system.
+// Example JSON object representing the date
+const dateTimeJson = {
+    "Chronology": "ISO",
+    "DayOfMonth": 11,
+    "DayOfWeek": 3, // Assuming 3 represents Wednesday (adjust as necessary)
+    "DayOfYear": 254,
+    "Hour": 13,
+    "Minute": 45,
+    "Second": 30,
+    "MonthValue": 9,
+    "Year": 2024
+};
 
-The mapped value of an integer is the new integer obtained by replacing each occurrence of digit i in the integer with mapping[i] for all 0 <= i <= 9.
+// Function to map day of week number to string
+const getDayOfWeek = (dayOfWeek) => {
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    return days[dayOfWeek - 1]; // Adjusting index since array is 0-based
+};
 
-You are also given another integer array nums. Return the array nums sorted in non-decreasing order based on the mapped values of its elements.
+// Convert the JSON object to a readable date string
+const readableDate = `${dateTimeJson.DayOfMonth.toString().padStart(2, '0')}-${dateTimeJson.MonthValue.toString().padStart(2, '0')}-${dateTimeJson.Year} ` +
+    `${dateTimeJson.Hour.toString().padStart(2, '0')}:${dateTimeJson.Minute.toString().padStart(2, '0')}:${dateTimeJson.Second.toString().padStart(2, '0')} ` +
+    `(${getDayOfWeek(dateTimeJson.DayOfWeek)})`;
+
+console.log("Formatted DateTime: " + readableDate);
