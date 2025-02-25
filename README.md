@@ -1,64 +1,79 @@
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.temporal.TemporalAdjusters;
 
-public class InvoicePeriodCalculator {
-    
-    public static void main(String[] args) {
-        LocalDate currentDate = LocalDate.now();
-        
-        System.out.println("Quarterly: " + getPeriod(currentDate, "Quarterly"));
-        System.out.println("Semi-Annually: " + getPeriod(currentDate, "Semi-Annually"));
-        System.out.println("Tri-Annually: " + getPeriod(currentDate, "Tri-Annually"));
-        System.out.println("Annually: " + getPeriod(currentDate, "Annually"));
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+class DateCalculatorTest {
+
+    @InjectMocks
+    private YourClassName instance; // Replace with the actual class name
+
+    @Mock
+    private YourClassName mockInstance; // If helper methods are in the same class, mock it
+
+    private LocalDate curDate;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        curDate = LocalDate.of(2025, Month.MARCH, 15); // Example current date
     }
 
-    public static String getPeriod(LocalDate currentDate, String invoicingType) {
-        LocalDate startDate, endDate;
-        
-        switch (invoicingType) {
-            case "Quarterly":
-                startDate = getQuarterStartDate(currentDate);
-                endDate = startDate.plusMonths(3).minusDays(1);
-                break;
-                
-            case "Semi-Annually":
-                startDate = getSemiAnnualStartDate(currentDate);
-                endDate = startDate.plusMonths(6).minusDays(1);
-                break;
-                
-            case "Tri-Annually":
-                startDate = getTriAnnualStartDate(currentDate);
-                endDate = startDate.plusMonths(4).minusDays(1);
-                break;
-                
-            case "Annually":
-                startDate = LocalDate.of(currentDate.getYear(), Month.JANUARY, 1);
-                endDate = LocalDate.of(currentDate.getYear(), Month.DECEMBER, 31);
-                break;
-                
-            default:
-                throw new IllegalArgumentException("Invalid invoicing type: " + invoicingType);
-        }
+    @Test
+    void testAnnualFrequency() {
+        DateRange result = instance.dateCalculator(curDate, "ANNUALLY");
 
-        return "Start: " + startDate + ", End: " + endDate;
-    }
-    
-    private static LocalDate getQuarterStartDate(LocalDate date) {
-        int month = date.getMonthValue();
-        int quarterStartMonth = ((month - 1) / 3) * 3 + 1;
-        return LocalDate.of(date.getYear(), quarterStartMonth, 1);
+        assertNotNull(result);
+        assertEquals(LocalDate.of(2025, Month.JANUARY, 1), result.getStartDate());
+        assertEquals(LocalDate.of(2025, Month.DECEMBER, 31), result.getEndDate());
     }
 
-    private static LocalDate getSemiAnnualStartDate(LocalDate date) {
-        int month = date.getMonthValue();
-        int semiAnnualStartMonth = (month <= 6) ? 1 : 7;
-        return LocalDate.of(date.getYear(), semiAnnualStartMonth, 1);
+    @Test
+    void testSemiAnnualFrequency() {
+        when(mockInstance.getSemiAnnualStartDate(curDate)).thenReturn(LocalDate.of(2025, Month.JANUARY, 1));
+
+        DateRange result = instance.dateCalculator(curDate, "SEMI_ANNUALLY");
+
+        assertNotNull(result);
+        assertEquals(LocalDate.of(2025, Month.JANUARY, 1), result.getStartDate());
+        assertEquals(LocalDate.of(2025, Month.JUNE, 30), result.getEndDate());
     }
 
-    private static LocalDate getTriAnnualStartDate(LocalDate date) {
-        int month = date.getMonthValue();
-        int triAnnualStartMonth = (month <= 4) ? 1 : (month <= 8) ? 5 : 9;
-        return LocalDate.of(date.getYear(), triAnnualStartMonth, 1);
+    @Test
+    void testTriAnnualFrequency() {
+        when(mockInstance.getTriAnnualStartDate(curDate)).thenReturn(LocalDate.of(2025, Month.JANUARY, 1));
+
+        DateRange result = instance.dateCalculator(curDate, "TRI_ANNUALLY");
+
+        assertNotNull(result);
+        assertEquals(LocalDate.of(2025, Month.JANUARY, 1), result.getStartDate());
+        assertEquals(LocalDate.of(2025, Month.APRIL, 30), result.getEndDate());
+    }
+
+    @Test
+    void testQuarterlyFrequency() {
+        when(mockInstance.getQuarterStartDate(curDate)).thenReturn(LocalDate.of(2025, Month.JANUARY, 1));
+
+        DateRange result = instance.dateCalculator(curDate, "QUARTERLY");
+
+        assertNotNull(result);
+        assertEquals(LocalDate.of(2025, Month.JANUARY, 1), result.getStartDate());
+        assertEquals(LocalDate.of(2025, Month.MARCH, 31), result.getEndDate());
+    }
+
+    @Test
+    void testInvalidFrequency() {
+        DateRange result = instance.dateCalculator(curDate, "UNKNOWN");
+
+        assertNotNull(result);
+        assertNull(result.getStartDate());
+        assertNull(result.getEndDate());
     }
 }
